@@ -1,6 +1,7 @@
 # 视频（mp4格式）和脚本位于同一路径下，并在该路径下运行脚本（双击或命令行）
 
 import os
+import time
 
 # 重命名后视频序列形为：“v (1).mp4”、“v (2).mp4”、“v (3).mp4”……
 n = input('按合并顺序选中视频并重命名为v，然后输入视频总数：')
@@ -23,7 +24,10 @@ cm = 'copy /b ' + series +' tempfile.tmp'
 os.system(cm)
 
 # ts转mp4
-cm = 'ffmpeg -i tempfile.tmp -c copy -bsf:a aac_adtstoasc merge.mp4'
+# 防止输出重名，添加unix时间后缀
+time = int(time.time())
+outPutName = 'merge' + str(time) + '.mp4'
+cm = 'ffmpeg -i tempfile.tmp -c copy -bsf:a aac_adtstoasc ' + outPutName
 os.system(cm)
 
 # 删除临时文件
