@@ -4,16 +4,18 @@ import os
 import time
 
 # 重命名后视频序列形为：“v (1).mp4”、“v (2).mp4”、“v (3).mp4”……
-n = input('按合并顺序选中视频并重命名为v，然后输入视频总数：')
+n = input('按合并次序倒序选中视频并重命名为v，然后输入视频总数：')
 n = int(n)
 
 # mp4转ts
+# ffmpeg -i 1.mp4 -c copy -f mpegts -bsf:v h264_mp4toannexb 1.ts
 for i in range(n):
 	i = i+1
 	cm = 'ffmpeg -i "v (' + str(i) + ').mp4" -c copy -f mpegts -bsf:v h264_mp4toannexb ' + str(i) + '.ts'
 	os.system(cm)
 
 # 合并ts
+# copy /b 1.ts+2.ts+3.ts tempfile.tmp
 series = ''
 for i in range(n):
 	i = i+1
@@ -24,6 +26,7 @@ cm = 'copy /b ' + series +' tempfile.tmp'
 os.system(cm)
 
 # ts转mp4
+# ffmpeg -i tempfile.tmp -c copy -bsf:a aac_adtstoasc
 # 防止输出重名，添加unix时间后缀
 time = int(time.time())
 outPutName = 'merge' + str(time) + '.mp4'
